@@ -10,30 +10,30 @@ package com.capgemini.placeToSplit;
  * }}}
  */
 public final class PlaceToSplit {
-    private PlaceToSplit() {
-    }
+	private PlaceToSplit() {
+	}
 
-    public static boolean canBalance(int[] nums) {
-    	if(nums == null || nums.length==0) {
-    		return false;
-    	} else {
-    		int sum = calculateSum(nums);
-    		
-    		if(sum % 2 != 0) {
-    			return false; // we can't divide odd number into two integers
-    		}
-    		
-    		return isThereHalfOfSumAfterOneOfElems(nums, sum);
-    	}
-    }
+	public static boolean canBalance(int[] nums) {
+		if (nums == null || nums.length == 0) {
+			return false;
+		} else {
+			int sum = calculateSum(nums);
+
+			if (sum % 2 != 0) {
+				return false; // we can't divide odd number into two integers
+			}
+
+			return isThereHalfOfSumAfterOneOfElems(nums, sum);
+		}
+	}
 
 	private static boolean isThereHalfOfSumAfterOneOfElems(int[] nums, int sum) {
-		int halfOfSum = sum/2;
+		int halfOfSum = sum / 2;
 		int sumUpToI = 0;
-		
+
 		for (int num : nums) {
 			sumUpToI += num;
-			if(sumUpToI==halfOfSum) {
+			if (sumUpToI == halfOfSum) {
 				return true;
 			}
 		}

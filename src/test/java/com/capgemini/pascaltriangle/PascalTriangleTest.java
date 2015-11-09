@@ -6,81 +6,81 @@ import org.junit.Test;
 
 public class PascalTriangleTest {
 
-	@Test(expected=IndexOutOfBoundsException.class)
+	@Test(expected = IndexOutOfBoundsException.class)
 	public void shouldThrowExceptionWhenColumnGreaterThanRow() {
-		//given
+		// given
 		int row = 10;
 		int column = 12;
-		//when
+		// when
 		PascalTriangle.pascal(column, row);
-		//then
+		// then
 	}
-	
-	@Test(expected=IndexOutOfBoundsException.class)
+
+	@Test(expected = IndexOutOfBoundsException.class)
 	public void shouldThrowExceptionWhenColumnIsNegative() {
-		//given
+		// given
 		int row = 10;
 		int column = -1;
-		//when
+		// when
 		PascalTriangle.pascal(column, row);
-		//then
+		// then
 	}
-	
-	@Test(expected=IndexOutOfBoundsException.class)
+
+	@Test(expected = IndexOutOfBoundsException.class)
 	public void shouldThrowExceptionWhenRowIsNegative() {
-		//given
+		// given
 		int row = -1;
 		int column = 2;
-		//when
+		// when
 		PascalTriangle.pascal(column, row);
-		//then
+		// then
 	}
-	
+
 	@Test
 	public void shouldReturnOneForFirstInRow() {
-		//given
+		// given
 		int row = 5;
 		int column = 0;
 		long expected = 1;
-		//when
+		// when
 		long actual = PascalTriangle.pascal(column, row);
-		//then
+		// then
 		assertEquals(expected, actual);
 	}
-	
+
 	@Test
 	public void shouldReturnOneForLastInRow() {
-		//given
+		// given
 		int row = 5;
 		int column = 5;
 		long expected = 1;
-		//when
+		// when
 		long actual = PascalTriangle.pascal(column, row);
-		//then
+		// then
 		assertEquals(expected, actual);
 	}
-	
+
 	@Test
 	public void shouldReturnTwoForRowTwoColOne() {
-		//given
+		// given
 		int row = 2;
 		int column = 1;
 		long expected = 2;
-		//when
+		// when
 		long actual = PascalTriangle.pascal(column, row);
-		//then
+		// then
 		assertEquals(expected, actual);
 	}
-	
+
 	@Test
 	public void shouldReturnTwoForRowNineColFour() {
-		//given
+		// given
 		int row = 9;
 		int column = 4;
 		long expected = 126;
-		//when
+		// when
 		long actual = PascalTriangle.pascal(column, row);
-		//then
+		// then
 		assertEquals(expected, actual);
 	}
 

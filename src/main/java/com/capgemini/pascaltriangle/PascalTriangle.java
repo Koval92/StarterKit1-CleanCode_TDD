@@ -14,16 +14,17 @@ package com.capgemini.pascaltriangle;
  * 9   1   9  36   84  126 126  84  36  9   1
  */
 public class PascalTriangle {
-    public static long pascal(int column, int row) {
-    	checkBounds(column, row);
-    	int[][] pascalTriangle = generateTriangle(row+1); //rows are numbered from 0
-  
-        return pascalTriangle[row][column];
-    }
+	public static long pascal(int column, int row) {
+		checkBounds(column, row);
+		int[][] pascalTriangle = generateTriangle(row + 1); // rows are numbered
+															// from 0
+
+		return pascalTriangle[row][column];
+	}
 
 	private static int[][] generateTriangle(int numberOfRows) {
 		int[][] pascalTriangle = new int[numberOfRows][numberOfRows];
-    	for (int i = 0; i<numberOfRows; i++) {
+		for (int i = 0; i < numberOfRows; i++) {
 			fillBoundariesOfRow(pascalTriangle, i);
 			fillInsideOfRow(pascalTriangle, i);
 		}
@@ -31,17 +32,17 @@ public class PascalTriangle {
 	}
 
 	private static void fillInsideOfRow(int[][] pascalTriangle, int row) {
-		for(int j = 1; j<row; j++) {
-			pascalTriangle[row][j]=pascalTriangle[row-1][j-1]+pascalTriangle[row-1][j];
+		for (int j = 1; j < row; j++) {
+			pascalTriangle[row][j] = pascalTriangle[row - 1][j - 1] + pascalTriangle[row - 1][j];
 		}
 	}
 
 	private static void fillBoundariesOfRow(int[][] pascalTriangle, int row) {
-		pascalTriangle[row][0] = 1; //first in row
-		pascalTriangle[row][row] = 1; //last in row
+		pascalTriangle[row][0] = 1; // first in row
+		pascalTriangle[row][row] = 1; // last in row
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings("unused") //for debugging purposes
 	private static void display(int[][] pascalTriangle) {
 		for (int[] is : pascalTriangle) {
 			for (int i : is) {
@@ -52,9 +53,9 @@ public class PascalTriangle {
 	}
 
 	private static void checkBounds(int column, int row) {
-		if(column>row)
-    		throw new IndexOutOfBoundsException("Column is greater than row");
-    	if(column<0) // row < 0 is covered by previous check
-    		throw new IndexOutOfBoundsException("Column is negative");
+		if (column > row)
+			throw new IndexOutOfBoundsException("Column is greater than row");
+		if (column < 0) // row < 0 is covered by previous check
+			throw new IndexOutOfBoundsException("Column is negative");
 	}
 }

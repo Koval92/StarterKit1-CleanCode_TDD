@@ -8,71 +8,71 @@ public class PlaceToSplitTest {
 
 	@Test
 	public void shouldReturnFalseForNull() {
-		//given
+		// given
 		int[] nums = null;
-		//when
+		// when
 		boolean result = PlaceToSplit.canBalance(nums);
-		//then
+		// then
 		assertFalse(result);
 	}
-	
+
 	@Test
 	public void shouldReturnFalseForEmpty() {
-		//given
+		// given
 		int[] nums = new int[0];
-		//when
+		// when
 		boolean result = PlaceToSplit.canBalance(nums);
-		//then
+		// then
 		assertFalse(result);
 	}
-	
+
 	@Test
 	public void shouldReturnTrueForOneZeroElement() {
-		//given
-		int[] nums = new int[]{0};
-		//when
+		// given
+		int[] nums = new int[] { 0 };
+		// when
 		boolean result = PlaceToSplit.canBalance(nums);
-		//then
+		// then
 		assertTrue(result);
 	}
-	
+
 	@Test
 	public void shouldReturnTrueForTwoEqualElements() {
-		//given
-		int[] nums = new int[]{10, 10};
-		//when
+		// given
+		int[] nums = new int[] { 10, 10 };
+		// when
 		boolean result = PlaceToSplit.canBalance(nums);
-		//then
+		// then
 		assertTrue(result);
 	}
 
 	@Test
 	public void shouldReturnFalseForOneNonZeroElement() {
-		//given
-		int[] nums = new int[]{5};
-		//when
+		// given
+		int[] nums = new int[] { 5 };
+		// when
 		boolean result = PlaceToSplit.canBalance(nums);
-		//then
+		// then
 		assertFalse(result);
 	}
-	
+
 	@Test
 	public void shouldReturnTrueForFirstDataSet() {
-		//given
-		int[] nums = new int[]{1, 1, 1, 2, 1};
-		//when
+		// given
+		int[] nums = new int[] { 1, 1, 1, 2, 1 };
+		// when
 		boolean result = PlaceToSplit.canBalance(nums);
-		//then
+		// then
 		assertTrue(result);
 	}
-	
+
 	@Test
 	public void shouldReturnFalseForSecondDataSet() {
-		//given
-		int[] nums = new int[]{2, 1, 1, 2, 1};
-		//when
+		// given
+		int[] nums = new int[] { 2, 1, 1, 2, 1 };
+		// when
 		boolean result = PlaceToSplit.canBalance(nums);
-		//then
+		// then
 		assertFalse(result);
 	}
 }

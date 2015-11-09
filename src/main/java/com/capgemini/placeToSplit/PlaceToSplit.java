@@ -14,6 +14,37 @@ public final class PlaceToSplit {
     }
 
     public static boolean canBalance(int[] nums) {
-        return false;
+    	if(nums == null || nums.length==0) {
+    		return false;
+    	} else {
+    		int sum = calculateSum(nums);
+    		
+    		if(sum % 2 != 0) {
+    			return false; // we can't divide odd number into two integers
+    		}
+    		
+    		return isThereHalfOfSumAfterOneOfElems(nums, sum);
+    	}
     }
+
+	private static boolean isThereHalfOfSumAfterOneOfElems(int[] nums, int sum) {
+		int halfOfSum = sum/2;
+		int sumUpToI = 0;
+		
+		for (int num : nums) {
+			sumUpToI += num;
+			if(sumUpToI==halfOfSum) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static int calculateSum(int[] nums) {
+		int sum = 0;
+		for (int num : nums) {
+			sum += num;
+		}
+		return sum;
+	}
 }

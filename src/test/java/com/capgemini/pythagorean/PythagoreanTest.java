@@ -13,7 +13,7 @@ public class PythagoreanTest {
 		// when
 		int actuals[] = Pythagorean.findTriple(sum);
 		// then
-		assertTrue(actuals == null);
+		assertNull(actuals);
 	}
 
 	@Test

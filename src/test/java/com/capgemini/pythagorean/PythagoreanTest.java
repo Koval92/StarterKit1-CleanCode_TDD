@@ -35,7 +35,7 @@ public class PythagoreanTest {
 		// when
 		int actuals[] = Pythagorean.findTriple(sum);
 		// then
-		assertTrue(actuals != null);
+		assertNotNull(actuals);
 		assertArrayEquals(expecteds, actuals);
 	}
 }

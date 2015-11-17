@@ -18,27 +18,13 @@ public class PokerHands {
 	private static int result;
 	private static boolean leftOneColor;
 	private static boolean rightOneColor;
+	private static TreeMap<Integer, Integer> leftCounts;
+	private static TreeMap<Integer, Integer> rightCounts;
+	private static boolean leftIsStraight;
+	private static boolean rightIsStraight;
 
-	private static void initializeFields() {
+	private static void initializeFields(String handsAsString) {
 		result = 0;
-		leftOneColor = false;
-		rightOneColor = false;
-	}
-
-	public static boolean isLeftOneColor() {
-		return leftOneColor;
-	}
-
-	public static boolean isRightOneColor() {
-		return rightOneColor;
-	}
-
-	// returns 1 when left hand wins, and -1, if right one
-	public static int compare(String handsAsString) {
-		initializeFields();
-
-		System.out.println();
-		System.out.println("Current hands: " + handsAsString);
 
 		List<String> leftHand = getLeftHand(handsAsString);
 		List<String> rightHand = getRightHand(handsAsString);
@@ -46,32 +32,176 @@ public class PokerHands {
 		leftOneColor = isInOneColor(leftHand);
 		rightOneColor = isInOneColor(rightHand);
 
-		notifyIfHandHasColor();
-
 		List<Integer> leftFigures = getFiguresAsIntegers(leftHand);
 		List<Integer> rightFigures = getFiguresAsIntegers(rightHand);
 
 		displayFigures(leftFigures);
 		displayFigures(rightFigures);
 
-		Map<Integer, Integer> leftCounts = createCountsMap(leftFigures);
-		Map<Integer, Integer> rightCounts = createCountsMap(rightFigures);
+		leftCounts = createCountsTreeMap(leftFigures);
+		rightCounts = createCountsTreeMap(rightFigures);
+		
+		leftIsStraight = isStraight(leftCounts);
+		rightIsStraight = isStraight(rightCounts);
+	}
+	
+	// returns 1 when left hand wins, and -1, if right one
+	public static int compare(String handsAsString) {
+		initializeFields(handsAsString);
+
+		System.out.println("Current hands: " + handsAsString);
+		notifyIfHandHasColor();
 
 		displayCounts(leftCounts);
 		displayCounts(rightCounts);
 
-		checkForTwoPairs(leftCounts, rightCounts);
-		checkForHighestPair(leftCounts, rightCounts);
-		checkForHighestSingleCard(leftCounts, rightCounts);
+		// royal flush is straight flush, but with greater values
+		checkForStraightFlush();
+		checkForFourOfAKind();
+		checkForFullHouse();
+		checkForFlush();
+		checkForStraight();
+		checkForThreeOfAKind();
+		checkForTwoPairs();
+		checkForHighestPair();
+		checkForHighestSingleCard();
 
 		if (result == 0) {
 			System.out.println("No one wins!");
 		}
+		
+		System.out.println();
 
 		return result;
 	}
 
-	private static void checkForTwoPairs(Map<Integer, Integer> leftCounts, Map<Integer, Integer> rightCounts) {
+	private static void checkForStraightFlush() {
+		boolean leftIsStraightFlush = leftIsStraight && leftOneColor;
+		boolean rightIsStraightFlush = rightIsStraight && rightOneColor;
+		
+		System.out.println(leftIsStraightFlush);
+		System.out.println(rightIsStraightFlush);
+		
+		if(leftIsStraightFlush && !rightIsStraightFlush) {
+			System.out.println("Left wins by straight flush");
+			result = LEFT_WIN;
+		}
+		if(!leftIsStraightFlush && rightIsStraightFlush) {
+			System.out.println("Right wins by straight flush");
+			result = RIGHT_WIN;
+		}
+		
+		// if both have straight flush, then checkForStraight() finds higher
+	}
+
+	private static void checkForFourOfAKind() {
+		if (result != 0) {
+			return;
+		}
+
+		for (int card = ACE; card >= 2; card--) {
+			int leftCount = leftCounts.getOrDefault(card, 0);
+			int rightCount = rightCounts.getOrDefault(card, 0);
+
+			if ((leftCount == 4) && (rightCount < 4)) {
+				System.out.println("Left wins by four of a kind!");
+				result = LEFT_WIN;
+				return;
+			}
+
+			if ((leftCount < 4) && (rightCount == 4)) {
+				System.out.println("Right wins by four of a kind!");
+				result = RIGHT_WIN;
+				return;
+			}
+		}
+	}
+
+	private static void checkForFullHouse() {
+		if (result != 0) {
+			return;
+		}
+		
+		boolean leftIsFull = leftCounts.containsValue(2) && leftCounts.containsValue(3);
+		boolean rightIsFull = rightCounts.containsValue(2) && rightCounts.containsValue(3);
+		
+		if(leftIsFull && !rightIsFull) {
+			System.out.println("Left wins by full");
+			result = LEFT_WIN;
+			return;
+		}
+		if(!leftIsFull && rightIsFull) {
+			System.out.println("Right wins by full");
+			result = RIGHT_WIN;
+			return;
+		}
+		
+		// when both have full, one wins by greater triple - checkForThreeOfAKind()
+	}
+
+	private static void checkForFlush() {
+		if (result != 0) {
+			return;
+		}
+
+		if (leftOneColor && !rightOneColor) {
+			System.out.println("Left wins by color!");
+			result = LEFT_WIN;
+		}
+		if (!leftOneColor && rightOneColor) {
+			System.out.println("Right wins by color!");
+			result = RIGHT_WIN;
+		}
+	}
+
+	private static void checkForStraight() {
+		if (result != 0) {
+			return;
+		}
+
+		if (leftIsStraight && !rightIsStraight) {
+			System.out.println("Left wins by straight");
+			result = LEFT_WIN;
+		} else if (!leftIsStraight && rightIsStraight) {
+			System.out.println("Right wins by straight");
+			result = RIGHT_WIN;
+		}
+		
+		// when both are straight, one wins by greater single value - checkForHighestSingleCard()
+	}
+
+	public static boolean isStraight(TreeMap<Integer, Integer> counts) {
+		int highestCard = counts.firstKey();
+		int lowestCard = counts.lastKey();
+		int countsDifference = highestCard - lowestCard;
+		boolean isStraight = (counts.size() == 5) && (countsDifference == 4);
+		return isStraight;
+	}
+
+	private static void checkForThreeOfAKind() {
+		if (result != 0) {
+			return;
+		}
+
+		for (int card = ACE; card >= 2; card--) {
+			int leftCount = leftCounts.getOrDefault(card, 0);
+			int rightCount = rightCounts.getOrDefault(card, 0);
+
+			if ((leftCount == 3) && (rightCount < 3)) {
+				System.out.println("Left wins by triple: " + card);
+				result = LEFT_WIN;
+				return;
+			}
+
+			if ((leftCount < 3) && (rightCount == 3)) {
+				System.out.println("Right wins by triple: " + card);
+				result = RIGHT_WIN;
+				return;
+			}
+		}
+	}
+
+	private static void checkForTwoPairs() {
 		if (result != 0) {
 			return;
 		}
@@ -80,41 +210,43 @@ public class PokerHands {
 		List<Integer> rightPairs = new ArrayList<>();
 
 		for (int card = ACE; card >= 2; card--) {
-			int left = leftCounts.getOrDefault(card, 0);
-			int right = rightCounts.getOrDefault(card, 0);
+			int leftCount = leftCounts.getOrDefault(card, 0);
+			int rightCount = rightCounts.getOrDefault(card, 0);
 
-			if (left == 2) {
+			if (leftCount == 2) {
 				leftPairs.add(card);
 			}
-			if (right == 2) {
+			if (rightCount == 2) {
 				rightPairs.add(card);
 			}
 		}
-		
-		if(leftPairs.size() > rightPairs.size()) {
+
+		if (leftPairs.size() > rightPairs.size()) {
+			System.out.println("Left wins by pairs: " + leftPairs.toString());
 			result = LEFT_WIN;
 		}
-		if(leftPairs.size() < rightPairs.size()) {
+		if (leftPairs.size() < rightPairs.size()) {
+			System.out.println("Right wins by pairs: " + rightPairs.toString());
 			result = RIGHT_WIN;
 		}
 	}
 
-	private static void checkForHighestPair(Map<Integer, Integer> leftCounts, Map<Integer, Integer> rightCounts) {
+	private static void checkForHighestPair() {
 		if (result != 0) {
 			return;
 		}
 
 		for (int card = ACE; card >= 2; card--) {
-			int left = leftCounts.getOrDefault(card, 0);
-			int right = rightCounts.getOrDefault(card, 0);
+			int leftCount = leftCounts.getOrDefault(card, 0);
+			int rightCount = rightCounts.getOrDefault(card, 0);
 
-			if ((left == 2) && (right < 2)) {
+			if ((leftCount == 2) && (rightCount < 2)) {
 				System.out.println("Left wins by pair: " + card);
 				result = LEFT_WIN;
 				return;
 			}
 
-			if ((left < 2) && (right == 2)) {
+			if ((leftCount < 2) && (rightCount == 2)) {
 				System.out.println("Right wins by pair: " + card);
 				result = RIGHT_WIN;
 				return;
@@ -122,22 +254,22 @@ public class PokerHands {
 		}
 	}
 
-	public static void checkForHighestSingleCard(Map<Integer, Integer> leftCounts, Map<Integer, Integer> rightCounts) {
+	public static void checkForHighestSingleCard() {
 		if (result != 0) {
 			return;
 		}
 
 		for (int card = ACE; card >= 2; card--) {
-			int left = leftCounts.getOrDefault(card, 0);
-			int right = rightCounts.getOrDefault(card, 0);
+			int leftCount = leftCounts.getOrDefault(card, 0);
+			int rightCount = rightCounts.getOrDefault(card, 0);
 
-			if ((left == 1) && (right == 0)) {
+			if ((leftCount == 1) && (rightCount == 0)) {
 				System.out.println("Left wins by single card: " + card);
 				result = LEFT_WIN;
 				return;
 			}
 
-			if ((left == 0) && (right == 1)) {
+			if ((leftCount == 0) && (rightCount == 1)) {
 				System.out.println("Right wins by single card: " + card);
 				result = RIGHT_WIN;
 				return;
@@ -152,8 +284,8 @@ public class PokerHands {
 		}
 	}
 
-	public static Map<Integer, Integer> createCountsMap(List<Integer> figures) {
-		Map<Integer, Integer> counts = new TreeMap<>(Collections.reverseOrder());
+	public static TreeMap<Integer, Integer> createCountsTreeMap(List<Integer> figures) {
+		TreeMap<Integer, Integer> counts = new TreeMap<>(Collections.reverseOrder());
 		for (Integer figure : figures) {
 			counts.put(figure, counts.getOrDefault(figure, 0) + 1);
 		}

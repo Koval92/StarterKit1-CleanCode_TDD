@@ -2,18 +2,27 @@ package com.capgemini.pokerhands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 public class PokerHands {
+	public static final int JACK = 11;
+	public static final int QUEEN = 12;
+	public static final int KING = 13;
+	public static final int ACE = 14;
+	public static final int LEFT_WIN = 1;
+	public static final int RIGHT_WIN = -1;
+
+	private static int result;
 	private static boolean leftOneColor;
 	private static boolean rightOneColor;
 
 	private static void initializeFields() {
-
+		result = 0;
+		leftOneColor = false;
+		rightOneColor = false;
 	}
 
 	public static boolean isLeftOneColor() {
@@ -27,7 +36,7 @@ public class PokerHands {
 	// returns 1 when left hand wins, and -1, if right one
 	public static int compare(String handsAsString) {
 		initializeFields();
-		
+
 		System.out.println();
 		System.out.println("Current hands: " + handsAsString);
 
@@ -44,14 +53,96 @@ public class PokerHands {
 
 		displayFigures(leftFigures);
 		displayFigures(rightFigures);
-		
+
 		Map<Integer, Integer> leftCounts = createCountsMap(leftFigures);
 		Map<Integer, Integer> rightCounts = createCountsMap(rightFigures);
-		
+
 		displayCounts(leftCounts);
 		displayCounts(rightCounts);
 
-		return 0;
+		checkForTwoPairs(leftCounts, rightCounts);
+		checkForHighestPair(leftCounts, rightCounts);
+		checkForHighestSingleCard(leftCounts, rightCounts);
+
+		if (result == 0) {
+			System.out.println("No one wins!");
+		}
+
+		return result;
+	}
+
+	private static void checkForTwoPairs(Map<Integer, Integer> leftCounts, Map<Integer, Integer> rightCounts) {
+		if (result != 0) {
+			return;
+		}
+
+		List<Integer> leftPairs = new ArrayList<>();
+		List<Integer> rightPairs = new ArrayList<>();
+
+		for (int card = ACE; card >= 2; card--) {
+			int left = leftCounts.getOrDefault(card, 0);
+			int right = rightCounts.getOrDefault(card, 0);
+
+			if (left == 2) {
+				leftPairs.add(card);
+			}
+			if (right == 2) {
+				rightPairs.add(card);
+			}
+		}
+		
+		if(leftPairs.size() > rightPairs.size()) {
+			result = LEFT_WIN;
+		}
+		if(leftPairs.size() < rightPairs.size()) {
+			result = RIGHT_WIN;
+		}
+	}
+
+	private static void checkForHighestPair(Map<Integer, Integer> leftCounts, Map<Integer, Integer> rightCounts) {
+		if (result != 0) {
+			return;
+		}
+
+		for (int card = ACE; card >= 2; card--) {
+			int left = leftCounts.getOrDefault(card, 0);
+			int right = rightCounts.getOrDefault(card, 0);
+
+			if ((left == 2) && (right < 2)) {
+				System.out.println("Left wins by pair: " + card);
+				result = LEFT_WIN;
+				return;
+			}
+
+			if ((left < 2) && (right == 2)) {
+				System.out.println("Right wins by pair: " + card);
+				result = RIGHT_WIN;
+				return;
+			}
+		}
+	}
+
+	public static void checkForHighestSingleCard(Map<Integer, Integer> leftCounts, Map<Integer, Integer> rightCounts) {
+		if (result != 0) {
+			return;
+		}
+
+		for (int card = ACE; card >= 2; card--) {
+			int left = leftCounts.getOrDefault(card, 0);
+			int right = rightCounts.getOrDefault(card, 0);
+
+			if ((left == 1) && (right == 0)) {
+				System.out.println("Left wins by single card: " + card);
+				result = LEFT_WIN;
+				return;
+			}
+
+			if ((left == 0) && (right == 1)) {
+				System.out.println("Right wins by single card: " + card);
+				result = RIGHT_WIN;
+				return;
+			}
+		}
 	}
 
 	public static void displayCounts(Map<Integer, Integer> counts) {
@@ -103,16 +194,16 @@ public class PokerHands {
 				leftFigures.add(10);
 				break;
 			case "J":
-				leftFigures.add(11);
+				leftFigures.add(JACK);
 				break;
 			case "Q":
-				leftFigures.add(12);
+				leftFigures.add(QUEEN);
 				break;
 			case "K":
-				leftFigures.add(13);
+				leftFigures.add(KING);
 				break;
 			case "A":
-				leftFigures.add(14);
+				leftFigures.add(ACE);
 				break;
 			default:
 				leftFigures.add(Integer.parseInt(figure));

@@ -318,30 +318,30 @@ public class PokerHands {
 	}
 
 	private static List<Integer> getFiguresAsIntegers(List<String> cardsAsStrings) {
-		List<Integer> leftFigures = new ArrayList<>();
+		List<Integer> figures = new ArrayList<>();
 		for (String cardAsString : cardsAsStrings) {
 			String figure = cardAsString.substring(0, 1);
 			switch (figure) {
 			case "T":
-				leftFigures.add(10);
+				figures.add(10);
 				break;
 			case "J":
-				leftFigures.add(JACK);
+				figures.add(JACK);
 				break;
 			case "Q":
-				leftFigures.add(QUEEN);
+				figures.add(QUEEN);
 				break;
 			case "K":
-				leftFigures.add(KING);
+				figures.add(KING);
 				break;
 			case "A":
-				leftFigures.add(ACE);
+				figures.add(ACE);
 				break;
 			default:
-				leftFigures.add(Integer.parseInt(figure));
+				figures.add(Integer.parseInt(figure));
 			}
 		}
-		return leftFigures;
+		return figures;
 	}
 
 	private static boolean isInOneColor(List<String> hand) {
